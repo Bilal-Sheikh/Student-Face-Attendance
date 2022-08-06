@@ -47,7 +47,8 @@ def markAttendance(name):
 # Makeing a Attendance folder in C\User\Documents(default can't change) and file with currents date and time 
     
     curr_time = time.strftime("DATE=%d-%m-%Y TIME=%I %p") #store the date and time in str
-    home = expanduser("~") 
+    
+    home = os.path.expanduser('~')
     filename = f"{home}\\Documents\\Attendance\\Attendance {curr_time}.csv"
     # print(filename)
     
@@ -68,7 +69,7 @@ def markAttendance(name):
                 f.writelines(f'{name},{dtString}\n')
 
 def openAttendanceSheet():#Opens Attendance sheet directory
-    home = expanduser("~")
+    home = os.path.expanduser('~')
     attendanceFolderPath = f"{home}\\Documents\\Attendance"
     subprocess.Popen(f'''explorer "{attendanceFolderPath}"''')
 
@@ -207,8 +208,8 @@ def selectAttendanceFolder():#To select attendance folder
             messagebox.showerror("No Face found", f"ERROR:{e}\nPlease select a folder with only visible Faces")
 
 if __name__ == '__main__':
-
-    home = expanduser("~")#Gives the default home directory of the user
+    
+    home = os.path.expanduser('~') #Gives the default home directory of the user
     createDefaultAttendanceFolder = "C:\\Face Attendance for Students\\known"
     # createDefaultNewFaceFolder = "C:\\Face Attendance for Students\\New Saved Faces"
     if not os.path.exists(createDefaultAttendanceFolder):
