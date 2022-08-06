@@ -194,6 +194,7 @@ def selectAttendanceFolder():#To select attendance folder
 
         defaultAttendanceFolder = os.path.abspath(file)#Gives the selected dir as a str
         # print(defaultAttendanceFolder)
+        root.title(f"Student Face Attendance: {defaultAttendanceFolder}")
         Face_list = os.listdir(defaultAttendanceFolder)
         loadedImgs(defaultAttendanceFolder)
         known_encodingsList = findEncodings(known_images)
@@ -236,7 +237,8 @@ if __name__ == '__main__':
     #To always open the window in the center of the screen
     root.geometry(f"{700}x{500}+{(root.winfo_screenwidth()//2)-(700//2)}+{(root.winfo_screenheight()//2)-(500//2)}")
     root.resizable(0,0)#Not resizable
-    root.title("Student Face Attendance")
+    root.title(f"Student Face Attendance: {defaultAttendanceFolder}")
+    root.wm_iconbitmap(r"C:\Users\Bilal Sheikh\Desktop\Coding Stuff\Github\Final Year Project\Attendance_Face_Rec\Student.ico")
     root.configure(bg="grey25")
 
     menuBar = Menu(root)
