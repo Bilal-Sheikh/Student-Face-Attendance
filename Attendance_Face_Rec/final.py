@@ -11,6 +11,8 @@ from posixpath import expanduser
 from datetime import datetime
 import time
 import subprocess
+from email.message import EmailMessage
+import smtplib
 
 def loadedImgs(folder_path):
     for img_name in Face_list:
@@ -23,8 +25,19 @@ def loadedImgs(folder_path):
         # known_images.append(converted_img)
 
         known_images.append(loaded_image)
+
     # we want only name of the img and not its extension so [0] is used and [1] will return the extension
-        Images_name.append(os.path.splitext(img_name)[0])
+        # Images_name.append(os.path.splitext(img_name)[0])
+        # email_add.append(os.path.splitext(img_name)[1])
+
+        name = img_name.split('(')
+        Images_name.append(name[0])
+        email = name[1].split(')')
+        Email_add.append(email[0])
+
+        print(Images_name)
+        print(Email_add)
+        
         # cv2.imshow(img_name,converted_img)
     # print(known_images)
     # print(Images_name)
@@ -43,12 +56,12 @@ def findEncodings(knownimages):
         print(e)
         messagebox.showerror("No Face found", f"ERROR:{e}\nPlease select a folder with only visible Faces")
 
-def markAttendance(name):
+def markAttendance(name, email):
 # Makeing a Attendance folder in C\User\Documents(default can't change) and file with currents date and time 
     
     curr_time = time.strftime("DATE=%d-%m-%Y TIME=%I %p") #store the date and time in str
-    
     home = os.path.expanduser('~')
+    
     filename = f"{home}\\Documents\\Attendance\\Attendance {curr_time}.csv"
     # print(filename)
     
@@ -58,15 +71,42 @@ def markAttendance(name):
 
     with open(filename, 'a'):#Creates a .csv file with current date and time
         with open(filename, 'r+') as f:
-            myFile_Data = f.readlines()# To read and store all the lines in the files at once
-            nameInFile = []#Create a empty list to store names later
+            myFile_Data = f.readlines() # To read and store all the lines in the file at once
+            nameInFile = [] #Create a empty list to store names later
             for line in myFile_Data:#Read each stored line
                 entry = line.split(',')#Seperate them by "," to get the name and date values
                 nameInFile.append(entry[0])#Append name i.e, entry[0] to [] defined above
-            if name not in nameInFile:#Check if name exists or not,if not then write name and date in the .csv
+            
+            if name not in nameInFile: #Check if name exists or not,if not then write name and date in the .csv
                 current_time = datetime.now()
                 dtString = current_time.strftime('%I:%M:%S')
-                f.writelines(f'{name},{dtString}\n')
+                f.writelines(f'{name},{email},{dtString}\n')
+
+    # with open(filename, 'r'):
+    #     ab_File_data = f.readlines()
+    #     ab_Name_InFile = []
+    #     for lines in ab_File_data:
+    #         ab_entry = lines.split(',')
+    #         ab_Name_InFile.append(ab_entry[1])
+    #     print(ab_Name_InFile)
+    #     if email not in ab_Name_InFile:
+    #         absentAlert(email,"COETA Attendance Alert", f"Your ward {name} was ABSENT at {curr_time} lecture")
+
+def absentAlert(to, subject, body):
+    message = EmailMessage()
+    message.set_content(body)
+    message['to'] = to
+    message['subject'] = subject
+
+    username = "coeta.attendance.alerts@gmail.com"
+    message['from'] = username
+    password = "smasyohyxcovuixf"
+
+    server = smtplib.SMTP("smtp.gmail.com", 587)
+    server.starttls()
+    server.login(username, password)
+    server.send_message(message)
+    server.quit()
 
 def openAttendanceSheet():#Opens Attendance sheet directory
     home = os.path.expanduser('~')
@@ -76,7 +116,6 @@ def openAttendanceSheet():#Opens Attendance sheet directory
 def openNewSavedFaceFolder():#Opens New Saved folder directory
     newSavedFacesFolderPath = 'C:\\Face Attendance for Students\\New Saved Faces'
     subprocess.Popen(f'''explorer "{newSavedFacesFolderPath}"''')
-
 
 def saveFace():#Capture a new face
     messagebox.showinfo("Information", '''Capturing Face...\n
@@ -105,7 +144,9 @@ Please stay still and make sure your face is visible\nPress "ESC" to exit and "S
             messagebox.showinfo("Success", "Captured successfully")
             
             try:#Try to ask the user to save the Face with the name of the captured person
-                newName = askstring("Name the Face", "What is the name of the person:\t\t")
+                newName = askstring("Name the Face", '''Write the name of student and guardian's email in the format given below\n
+                <student name><space><student surname>(<guardian's email>)\n
+                ex: John Doe(johndoe@gmail.com)\n''')
                 #Then rename the random file with the user entered name
                 os.rename(f'C:\\Face Attendance for Students\\New Saved Faces\\{randomImgName}',
                 f'C:\\Face Attendance for Students\\New Saved Faces\\{newName}.jpg')
@@ -119,7 +160,12 @@ Please stay still and make sure your face is visible\nPress "ESC" to exit and "S
     # webCam.release()#DONT RELEASE THE CAM until all your work is done
     cv2.destroyAllWindows()#windows can be destroyed tho
 
-def takeFace():#Take the face from webcam and matching it with the previously loaded imgs
+def takeFace(ab_email, ab_name):#Take the face from webcam and matching it with the previously loaded imgs
+    
+    ab_curr_time = time.strftime("DATE=%d-%m-%Y TIME=%I %p")
+    ab_home = os.path.expanduser('~') #Gives the default home directory of the user
+    ab_filename = f"{ab_home}\\Documents\\Attendance\\Attendance {ab_curr_time}.csv"
+
     messagebox.showinfo("Information", '''Taking attendance...\nCapturing Face...\n
 Please stay still and make sure your face is visible\nPress "ESC" to exit''')
     
@@ -151,7 +197,9 @@ Please stay still and make sure your face is visible\nPress "ESC" to exit''')
 #Checks if a face is less than the given value. The lower the value the more strict it will be in finding the same face
                 if faceDistance[matchIndex]< 0.50:
                     frame_name = Images_name[matchIndex].upper()
-                    markAttendance(frame_name)
+                    frame_email = Email_add[matchIndex]
+
+                    markAttendance(frame_name, frame_email)
                     # print(frame_name)
                     top, right, bottom, left = faceLocFrame#define co-ordinates with the faces found in the webcam
                     #we *4 because earlier we decreased the size so that the box will perfectly fit the face
@@ -177,6 +225,27 @@ Please stay still and make sure your face is visible\nPress "ESC" to exit''')
                 known_images.clear()
                 print("Attendance closed successfully.")
                 messagebox.showinfo("Success", "Attendance closed successfully.")
+                with open(ab_filename, 'r') as f:
+                    ab_File_data = f.readlines()
+
+                    ab_Email_InFile = []
+                    ab_Name_InFile = []
+                    abesntEmails = []
+                    abesntNames = []
+                    
+                    for lines in ab_File_data:
+                        ab_entry = lines.split(',')
+                        ab_Email_InFile.append(ab_entry[1])
+                        ab_Name_InFile.append(ab_entry[0])
+
+                    # print("PRESENT: ",ab_Email_InFile)
+                    for mail,names in zip(ab_email, ab_name):
+                        if (mail not in ab_Email_InFile) and (names not in ab_Name_InFile):
+                            abesntEmails.append(mail)
+                            abesntNames.append(names)
+                            absentAlert(mail,"COETA Attendance Alert", f"Your ward {names} was ABSENT at {ab_curr_time} lecture")
+                            # print("ABSENT: ", mail)
+                            # print("ABSENT: ", names)
                 break
     
     # webCam.release()
@@ -210,7 +279,6 @@ def selectAttendanceFolder():#To select attendance folder
 
 if __name__ == '__main__':
     
-    home = os.path.expanduser('~') #Gives the default home directory of the user
     createDefaultAttendanceFolder = "C:\\Face Attendance for Students\\known"
     # createDefaultNewFaceFolder = "C:\\Face Attendance for Students\\New Saved Faces"
     if not os.path.exists(createDefaultAttendanceFolder):
@@ -220,6 +288,7 @@ if __name__ == '__main__':
     defaultNewFaceFolder = "C:\\Face Attendance for Students\\New Saved Faces"
     known_images = []
     Images_name = []
+    Email_add = []
     Face_list = os.listdir(defaultAttendanceFolder)
 
     # print(Face_list)
@@ -253,7 +322,7 @@ if __name__ == '__main__':
     fg="gray96", font="copperplate 25 bold", padx=10, pady=10).pack(side=TOP, fill=X,)
 
     takefaceButton = Button(root, text="Take Attendance", font="copperplate 10 bold", bg="gray40",
-    fg="gray80", padx=10, pady=10, command=takeFace).pack(side=LEFT, anchor="nw", pady=50, padx=160)
+    fg="gray80", padx=10, pady=10, command=lambda:takeFace(Email_add, Images_name)).pack(side=LEFT, anchor="nw", pady=50, padx=160)
 
     savefaceButton = Button(root, text="Save Face", font="copperplate 10 bold", bg="gray40",
     fg="gray80", padx=10, pady=10, command=saveFace).pack(side=LEFT, anchor="nw", pady=50)
