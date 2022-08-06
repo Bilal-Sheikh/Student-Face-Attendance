@@ -30,13 +30,13 @@ def loadedImgs(folder_path):
         # Images_name.append(os.path.splitext(img_name)[0])
         # email_add.append(os.path.splitext(img_name)[1])
 
-        name = img_name.split('(')
-        Images_name.append(name[0])
-        email = name[1].split(')')
-        Email_add.append(email[0])
+        name = img_name.split('(') #To split name and email
+        Images_name.append(name[0]) #[0] will give name
+        email = name[1].split(')')  #[1] will give list which contains <email>.<extension>
+        Email_add.append(email[0]) #[0] will give email
 
-        print(Images_name)
-        print(Email_add)
+        # print(Images_name)
+        # print(Email_add)
         
         # cv2.imshow(img_name,converted_img)
     # print(known_images)
@@ -82,30 +82,20 @@ def markAttendance(name, email):
                 dtString = current_time.strftime('%I:%M:%S')
                 f.writelines(f'{name},{email},{dtString}\n')
 
-    # with open(filename, 'r'):
-    #     ab_File_data = f.readlines()
-    #     ab_Name_InFile = []
-    #     for lines in ab_File_data:
-    #         ab_entry = lines.split(',')
-    #         ab_Name_InFile.append(ab_entry[1])
-    #     print(ab_Name_InFile)
-    #     if email not in ab_Name_InFile:
-    #         absentAlert(email,"COETA Attendance Alert", f"Your ward {name} was ABSENT at {curr_time} lecture")
-
 def absentAlert(to, subject, body):
-    message = EmailMessage()
-    message.set_content(body)
-    message['to'] = to
-    message['subject'] = subject
+    message = EmailMessage() 
+    message.set_content(body) #Body of email
+    message['to'] = to # Guardian's email
+    message['subject'] = subject # Subject of email
 
-    username = "coeta.attendance.alerts@gmail.com"
-    message['from'] = username
-    password = "smasyohyxcovuixf"
+    username = "coeta.attendance.alerts@gmail.com" 
+    message['from'] = username # Sender's email
+    password = "smasyohyxcovuixf" # Google account app password
 
-    server = smtplib.SMTP("smtp.gmail.com", 587)
-    server.starttls()
+    server = smtplib.SMTP("smtp.gmail.com", 587) # 587 is the port no. for gmail's TLS
+    server.starttls() 
     server.login(username, password)
-    server.send_message(message)
+    server.send_message(message) 
     server.quit()
 
 def openAttendanceSheet():#Opens Attendance sheet directory
@@ -222,10 +212,10 @@ Please stay still and make sure your face is visible\nPress "ESC" to exit''')
             key = cv2.waitKey(1)
             
             if key == ord('\x1b'):
-                known_images.clear()
+                # known_images.clear()
                 print("Attendance closed successfully.")
                 messagebox.showinfo("Success", "Attendance closed successfully.")
-                with open(ab_filename, 'r') as f:
+                with open(ab_filename, 'r') as f: # open the attendance file
                     ab_File_data = f.readlines()
 
                     ab_Email_InFile = []
@@ -235,14 +225,15 @@ Please stay still and make sure your face is visible\nPress "ESC" to exit''')
                     
                     for lines in ab_File_data:
                         ab_entry = lines.split(',')
-                        ab_Email_InFile.append(ab_entry[1])
-                        ab_Name_InFile.append(ab_entry[0])
+                        ab_Email_InFile.append(ab_entry[1]) #contains email
+                        ab_Name_InFile.append(ab_entry[0]) #contains name
 
                     # print("PRESENT: ",ab_Email_InFile)
-                    for mail,names in zip(ab_email, ab_name):
+                    for mail,names in zip(ab_email, ab_name): 
+                #checks for name and email in the list with previously loaded imgs
                         if (mail not in ab_Email_InFile) and (names not in ab_Name_InFile):
-                            abesntEmails.append(mail)
-                            abesntNames.append(names)
+                            abesntEmails.append(mail) #append the mails which weren't found in an empty list
+                            abesntNames.append(names) #append the names which weren't found in an empty list
                             absentAlert(mail,"COETA Attendance Alert", f"Your ward {names} was ABSENT at {ab_curr_time} lecture")
                             # print("ABSENT: ", mail)
                             # print("ABSENT: ", names)
@@ -267,7 +258,7 @@ def selectAttendanceFolder():#To select attendance folder
         Face_list = os.listdir(defaultAttendanceFolder)
         loadedImgs(defaultAttendanceFolder)
         known_encodingsList = findEncodings(known_images)
-        known_images.clear()
+        known_images.clear() #Clear previous encodings to avoid re-encoding of the same imgs
         try:
             print(f'{len(known_encodingsList)} face encodings found')
             messagebox.showinfo("Faces found",
@@ -289,7 +280,7 @@ if __name__ == '__main__':
     known_images = []
     Images_name = []
     Email_add = []
-    Face_list = os.listdir(defaultAttendanceFolder)
+    Face_list = os.listdir(defaultAttendanceFolder) # Contains all the files in a directory
 
     # print(Face_list)
     loadedImgs(defaultAttendanceFolder)
@@ -323,6 +314,7 @@ if __name__ == '__main__':
 
     takefaceButton = Button(root, text="Take Attendance", font="copperplate 10 bold", bg="gray40",
     fg="gray80", padx=10, pady=10, command=lambda:takeFace(Email_add, Images_name)).pack(side=LEFT, anchor="nw", pady=50, padx=160)
+                            #Lambda to pass parameters for method
 
     savefaceButton = Button(root, text="Save Face", font="copperplate 10 bold", bg="gray40",
     fg="gray80", padx=10, pady=10, command=saveFace).pack(side=LEFT, anchor="nw", pady=50)
