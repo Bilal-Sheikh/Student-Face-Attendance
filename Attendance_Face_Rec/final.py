@@ -28,7 +28,7 @@ def loadedImgs(folder_path):
         # cv2.imshow(img_name,converted_img)
     # print(known_images)
     # print(Images_name)
-    # cv2.waitKey(0)
+    # cv2.waitKey(0) 
 
 def findEncodings(knownimages):
     try:#Trying to get face encodings, if not found jump to except
