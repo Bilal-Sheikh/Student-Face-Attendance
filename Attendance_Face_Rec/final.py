@@ -298,7 +298,7 @@ if __name__ == '__main__':
     root.geometry(f"{700}x{500}+{(root.winfo_screenwidth()//2)-(700//2)}+{(root.winfo_screenheight()//2)-(500//2)}")
     root.resizable(0,0)#Not resizable
     root.title(f"Student Face Attendance: {defaultAttendanceFolder}")
-    root.wm_iconbitmap(r"C:\Users\Bilal Sheikh\Desktop\Coding Stuff\Github\Final Year Project\Attendance_Face_Rec\Student.ico")
+    root.wm_iconbitmap("Student.ico")
     root.configure(bg="grey25")
 
     menuBar = Menu(root)
