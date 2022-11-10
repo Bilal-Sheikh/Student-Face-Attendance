@@ -142,14 +142,14 @@ Please stay still and make sure your face is visible\nPress "ESC" to exit and "S
                 f'C:\\Face Attendance for Students\\New Saved Faces\\{newName}.jpg')
                 messagebox.showinfo("Success", f"Saved Successfully in\n{defaultNewFaceFolder}")
                 
-            #if user enters a name which already exists, delete the random file and show error
+            # if user enters a name which already exists, delete the random file and show error
             except Exception as e:
                 messagebox.showerror("File Error", "File already exists")
                 os.remove(f'C:\\Face Attendance for Students\\New Saved Faces\\{randomImgName}')
 
-    # webCam.release()#DONT RELEASE THE CAM until all your work is done
-    cv2.destroyAllWindows()#windows can be destroyed tho
-
+    # webCam.release() # DONT RELEASE THE CAM until all your work is done
+    cv2.destroyAllWindows() # windows can be destroyed tho
+ 
 def takeFace(ab_email, ab_name):#Take the face from webcam and matching it with the previously loaded imgs
     
     ab_curr_time = time.strftime("DATE=%d-%m-%Y TIME=%I %p")

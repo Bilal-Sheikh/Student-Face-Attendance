@@ -6,7 +6,7 @@ imgBill = face_recognition.load_image_file('C:\\Users\\Bilal Sheikh\\Desktop\\Co
 imgBill = cv2.cvtColor(imgBill,cv2.COLOR_BGR2RGB)
 imgJeff = face_recognition.load_image_file('C:\\Users\\Bilal Sheikh\\Desktop\\Coding Stuff\\Python\\practise\\xAttendance_Face_Rec\\known\\Jeff Bezos.jpg')
 imgJeff = cv2.cvtColor(imgJeff,cv2.COLOR_BGR2RGB)
- 
+
 faceLocBill = face_recognition.face_locations(imgBill)[0] # Detect coordinates of faces. [0] is used cause it returns a list of 1 element and we need 1st element at index [0]
 encodeBill = face_recognition.face_encodings(imgBill)[0]# [0] is used because it retuns an array of 1 element so we need 1st element hence the value [0] 
 cv2.rectangle(imgBill,(faceLocBill[3],faceLocBill[0]),(faceLocBill[1],faceLocBill[2]),(0,255,0),2) # Green color rectangle around the face
@@ -27,5 +27,3 @@ print(faceDis)
 cv2.imshow('Bill Gates',imgBill)# (1st param,2nd param) 1st shows the name defined in '' on top of dialog box of img
 cv2.imshow('Jeff Bezos',imgJeff)
 cv2.waitKey(0) # delay value is in miliseconds i.e, (5000) is 5 sec (10000) is 10 sec and (0) is infinite(until a key is pressed)
-
-
