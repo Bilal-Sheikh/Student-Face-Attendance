@@ -108,7 +108,7 @@ def Save_Face(): #Capture a new face
     messagebox.showinfo("Information", '''Capturing Face...\nPlease stay still and make sure your face is visible\nPress "ESC" to exit and "Spacebar" to capture Face''')
 
     while True: #Open webcam
-        _, save_frame = webCam.read()
+        _, save_frame = web_cam.read()
         cv2.imshow("Save A New Face", save_frame)
 
         key = cv2.waitKey(1)
@@ -147,30 +147,30 @@ def Save_Face(): #Capture a new face
     # webCam.release() # DONT RELEASE THE CAM until all your work is done
     cv2.destroyAllWindows() # windows can be destroyed tho
  
-def Take_Face(ab_email, ab_name):#Take the face from webcam and matching it with the previously loaded imgs
+def Take_Face(email_add, images_name):#Take the face from webcam and matching it with the previously loaded imgs
     
 
     messagebox.showinfo("Information", '''Taking attendance...\nCapturing Face...\nPlease stay still and make sure your face is visible\nPress "ESC" to exit''')
     
     while True:#open web cam
-            _, frame = webCam.read() # capturing each frame from the WebCam.
+            _, frame = web_cam.read() # capturing each frame from the WebCam.
 
             resize_img = cv2.resize(frame, (0,0), None, 0.25, 0.25)#Decrease the size webcam img for faster processing
-            webCamImg = cv2.cvtColor(resize_img, cv2.COLOR_BGR2RGB)
+            web_cam_img = cv2.cvtColor(resize_img, cv2.COLOR_BGR2RGB)
 
-            facesInFrame = face_recognition.face_locations(webCamImg)#Find faces in the webcam
-            encodesInFrame = face_recognition.face_encodings(webCamImg, facesInFrame)#take face encodings of the located face
+            faces_in_frame = face_recognition.face_locations(web_cam_img)#Find faces in the webcam
+            encodes_in_frame = face_recognition.face_encodings(web_cam_img, faces_in_frame)#take face encodings of the located face
 
             #zip() take the [0] index of 1st list and binds it with [0] index of 2nd list
-            for encodeFaceFrame, faceLocFrame in zip(encodesInFrame, facesInFrame):
-                faceDistance = face_recognition.face_distance(known_encodings_list, encodeFaceFrame)
+            for encode_face_in_frame, face_loc_in_frame in zip(encodes_in_frame, faces_in_frame):
+                face_distance = face_recognition.face_distance(known_encodings_list, encode_face_in_frame)
                 
                 # matches = face_recognition.compare_faces(known_encodings_list, encodeFaceFrame)
                 # print(faceDistance)
                 # print(matches)
 
                 # To find the best face match we have to choose the index which has the lowest element in the array
-                matchIndex = np.argmin(faceDistance)
+                correct_match = np.argmin(face_distance)
                 # This will return the lowest face distance available in the array and the lowest face 
                 # distance is the true match 
                 # For ex: if it see the Barack Obama face it will return [0] as the other face distance 
@@ -180,13 +180,13 @@ def Take_Face(ab_email, ab_name):#Take the face from webcam and matching it with
                 # print(z)
                 
 #Checks if a face is less than the given value. The lower the value the more strict it will be in finding the same face
-                if faceDistance[matchIndex]< 0.50:
-                    frame_name = images_name[matchIndex].upper()
-                    frame_email = email_add[matchIndex]
+                if face_distance[correct_match]< 0.50:
+                    frame_name = images_name[correct_match].upper()
+                    frame_email = email_add[correct_match]
 
                     Mark_Attendance(frame_name, frame_email)
                     # print(frame_name)
-                    top, right, bottom, left = faceLocFrame#define co-ordinates with the faces found in the webcam
+                    top, right, bottom, left = face_loc_in_frame#define co-ordinates with the faces found in the webcam
                     #we *4 because earlier we decreased the size so that the box will perfectly fit the face
                     top, right, bottom, left = top*4, right*4, bottom*4, left*4
 
@@ -196,7 +196,7 @@ def Take_Face(ab_email, ab_name):#Take the face from webcam and matching it with
                 else: #If no face is matched 
                     frame_name = 'Unknown'
                     # print(frame_name)
-                    top, right, bottom, left = faceLocFrame
+                    top, right, bottom, left = face_loc_in_frame
                     top, right, bottom, left = top*4, right*4, bottom*4, left*4
 
                     cv2.rectangle(frame,(left,top),(right,bottom),(0,255,0),2)
@@ -211,24 +211,24 @@ def Take_Face(ab_email, ab_name):#Take the face from webcam and matching it with
                 print("Attendance closed successfully.")
                 messagebox.showinfo("Success", "Attendance closed successfully.\nPlease wait while we send emails to guardians of absent students.\nThis may take a while")
                 with open(filename, 'r') as f: # open the attendance file
-                    ab_File_data = f.readlines()
+                    file_data = f.readlines()
 
-                    ab_Email_InFile = []
-                    ab_Name_InFile = []
+                    email_in_file = []
+                    name_in_file = []
                     # abesntEmails = []
                     # abesntNames = []
                     
-                    for lines in ab_File_data:
-                        ab_entry = lines.split(',')
-                        ab_Email_InFile.append(ab_entry[1]) #contains email
-                        ab_Name_InFile.append(ab_entry[0]) #contains name
+                    for lines in file_data:
+                        add_entry = lines.split(',')
+                        email_in_file.append(add_entry[1]) #contains email
+                        name_in_file.append(add_entry[0]) #contains name
 
                     # print("PRESENT: ",ab_Email_InFile)
 
-                    for mail, names in zip(ab_email, ab_name): 
+                    for mail, names in zip(email_add, images_name): 
                     #checks for name and email in the list with previously loaded imgs
 
-                        if (mail not in ab_Email_InFile) and (names not in ab_Name_InFile):
+                        if (mail not in email_in_file) and (names not in name_in_file):
                             # abesntEmails.append(mail) #append the mails which weren't found in an empty list
                             # abesntNames.append(names) #append the names which weren't found in an empty list
                             Absent_Alert(mail,"COETA Attendance Alert", f"Your ward {names} was ABSENT at {curr_time} lecture")
@@ -287,4 +287,4 @@ known_encodings_list = Find_Encodings(known_images)
 print(f'{len(known_encodings_list)} face encodings found') 
 # messagebox.showinfo("Known Faces found", f"Found {len(known_encodingsList)} faces in directory\n{defaultAttendanceFolder}")
 
-webCam = cv2.VideoCapture(0)# (0) represents default webcam
+web_cam = cv2.VideoCapture(0)# (0) represents default webcam
