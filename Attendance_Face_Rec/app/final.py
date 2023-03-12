@@ -48,7 +48,7 @@ def Find_Encodings(knownimages):
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) #Converting the loaded imgs from BGR to RGB format
             encode = face_recognition.face_encodings(img)[0]
             encode_list.append(encode)
-        # print(encodeList)
+        # print(encode_list)
         return encode_list
     except Exception as e:
         print(e)
@@ -94,15 +94,6 @@ def Absent_Alert(to, subject, body):
     server.login(username, password)
     server.send_message(message) 
     server.quit()
-
-def Open_Attendance_Sheet(): #Opens Attendance sheet directory
-    home = os.path.expanduser('~')
-    attendance_folder_path = f"{home}\\Documents\\Attendance"
-    subprocess.Popen(f'''explorer "{attendance_folder_path}"''')
-
-def Open_New_Saved_Faces_Folder(): #Opens New Saved folder directory
-    newSavedFaces_folder_path = 'C:\\Face Attendance for Students\\New Saved Faces'
-    subprocess.Popen(f'''explorer "{newSavedFaces_folder_path}"''')
 
 def Save_Face(): #Capture a new face
     messagebox.showinfo("Information", '''Capturing Face...\nPlease stay still and make sure your face is visible\nPress "ESC" to exit and "Spacebar" to capture Face''')
@@ -239,32 +230,34 @@ def Take_Face(email_add, images_name):#Take the face from webcam and matching it
     # webCam.release()
     cv2.destroyAllWindows()
 
-def Select_Attendance_Folder():#To select attendance folder
-    global default_attendance_folder, face_list, known_encodings_list #Made it global to modify
+# def Select_Attendance_Folder():#To select attendance folder
+#     global default_attendance_folder, face_list, known_encodings_list #Made it global to modify
 
-    images_name.clear()#Clear previously stored names to avoid conflict
+#     images_name.clear()#Clear previously stored names to avoid conflict
 
-    file = filedialog.askdirectory()
-    if file:
-        messagebox.showwarning("Loading...",
-        "Please wait till all the faces are loaded.\nThis depends on the number of faces you have in the selected directory\nPlease click OK to start")
+#     file = filedialog.askdirectory()
+#     if file:
+#         messagebox.showwarning("Loading...",
+#         "Please wait till all the faces are loaded.\nThis depends on the number of faces you have in the selected directory\nPlease click OK to start")
 
-        default_attendance_folder = os.path.abspath(file)#Gives the selected dir as a str
-        # print(defaultAttendanceFolder)
-        face_list = os.listdir(default_attendance_folder)
-        Loaded_Imgs(default_attendance_folder)
-        known_encodings_list = Find_Encodings(known_images)
-        known_images.clear() #Clear previous encodings to avoid re-encoding of the same imgs
-        try:
-            print(f'{len(known_encodings_list)} face encodings found')
-            messagebox.showinfo("Faces found",
-            f"Loading completed successfully\nFound {len(known_encodings_list)} faces in directory\n{default_attendance_folder}")
-        #   print(filepath)
-        except Exception as e:
-            print(e)
-            messagebox.showerror("No Face found", f"ERROR:{e}\nPlease select a folder with only visible Faces")
+#         default_attendance_folder = os.path.abspath(file)#Gives the selected dir as a str
+#         # print(defaultAttendanceFolder)
+#         face_list = os.listdir(default_attendance_folder)
+#         Loaded_Imgs(default_attendance_folder)
+#         known_encodings_list = Find_Encodings(known_images)
+#         known_images.clear() #Clear previous encodings to avoid re-encoding of the same imgs
+#         try:
+#             print(f'{len(known_encodings_list)} face encodings found')
+#             messagebox.showinfo("Faces found",
+#             f"Loading completed successfully\nFound {len(known_encodings_list)} faces in directory\n{default_attendance_folder}")
+#             print(images_name)
+#         #   print(filepath)
+#         except Exception as e:
+#             print(e)
+#             messagebox.showerror("No Face found", f"ERROR:{e}\nPlease select a folder with only visible Faces")
 
 
+    
 create_default_attendance_folder = "C:\\Face Attendance for Students\\known"
 # createDefaultNewFaceFolder = "C:\\Face Attendance for Students\\New Saved Faces"
 if not os.path.exists(create_default_attendance_folder):
