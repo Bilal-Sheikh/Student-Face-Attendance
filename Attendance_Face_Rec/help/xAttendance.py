@@ -80,7 +80,7 @@ def takeFace():
             encodesInFrame = face_recognition.face_encodings(webCamImg, facesInFrame)
 
             for encodeFaceFrame, faceLocFrame in zip(encodesInFrame, facesInFrame):
-                matches = face_recognition.compare_faces(known_encodingsList, encodeFaceFrame)
+                # matches = face_recognition.compare_faces(known_encodingsList, encodeFaceFrame)
                 faceDistance = face_recognition.face_distance(known_encodingsList, encodeFaceFrame)
                 # print(faceDistance)
                 # print(matches)
@@ -124,8 +124,8 @@ def takeFace():
     # webCam.release()
     cv2.destroyAllWindows()
 
-path = 'C:\\Users\\Bilal Sheikh\\Desktop\\Coding Stuff\\Python\\practise\\xAttendance_Face_Rec\\known'
-New_Face_path = 'C:\\Users\\Bilal Sheikh\\Desktop\\Coding Stuff\\Python\\practise\\xAttendance_Face_Rec\\New Saved Faces'
+path = 'C:\\Users\\Bilal Sheikh\\Desktop\\Coding Stuff\\Github\\Final Year Project\\Attendance_Face_Rec\\known'
+New_Face_path = 'C:\\Users\\Bilal Sheikh\\Desktop\\Coding Stuff\\Github\\Final Year Project\\Attendance_Face_Rec\\New Saved Faces'
 known_images = [] #contains RGB converted imgs
 Images_name = []
 Face_list = os.listdir(path)

@@ -13,10 +13,11 @@ from email.message import EmailMessage
 import smtplib
 
 def Loaded_Imgs(folder_path):
+    # print("test1")
     for img_name in face_list:
     # loading each img in path to find faces
         loaded_image = face_recognition.load_image_file(f'{folder_path}\\{img_name}')
-
+        # print(loaded_image)
     # we don't really have to convert the img as we will only use this to compare the imgs captured in the WebCam
     # its just used to check if the list is working properly or not
         # converted_img = cv2.cvtColor(loaded_image,cv2.COLOR_BGR2RGB)
@@ -33,21 +34,27 @@ def Loaded_Imgs(folder_path):
         email = name[1].split(')')  #[1] will give list which contains <email>.<extension>
         email_add.append(email[0]) #[0] will give email
 
-        # print(Images_name)
-        # print(Email_add)
+        # print("test2")
+        print(images_name)
+        print(email_add)
+        # print("test3")
         
         # cv2.imshow(img_name,converted_img)
     # print(known_images)
     # print(Images_name)
     # cv2.waitKey(0) 
 
-def Find_Encodings(knownimages):
+def Find_Encodings(known_images):
+    
+    # print("Known_images")
+    # print(known_images)
     try: #Trying to get face encodings, if not found jump to except
         encode_list = []
-        for img in knownimages:
+        for img in known_images:
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) #Converting the loaded imgs from BGR to RGB format
             encode = face_recognition.face_encodings(img)[0]
             encode_list.append(encode)
+        # print("encode_list")
         # print(encode_list)
         return encode_list
     except Exception as e:
@@ -103,7 +110,6 @@ def Save_Face(): #Capture a new face
         cv2.imshow("Save A New Face", save_frame)
 
         key = cv2.waitKey(1)
-
         if key == ord('\x1b'): #'\x1b' is the code for "ESC" key
             messagebox.showinfo("Success", "Save Face closed successfully")
             break
@@ -166,8 +172,8 @@ def Take_Face(email_add, images_name):#Take the face from webcam and matching it
                 # distance is the true match 
                 # For ex: if it see the Barack Obama face it will return [0] as the other face distance 
                 # value will definetely will be higher than the others and if it sees Bill Gates face it will return [1]
-                # print(matchIndex)
-                # z = faceDistance[matchIndex]
+                # print(correct_match)
+                # z = face_distance[correct_match]
                 # print(z)
                 
 #Checks if a face is less than the given value. The lower the value the more strict it will be in finding the same face
@@ -222,39 +228,44 @@ def Take_Face(email_add, images_name):#Take the face from webcam and matching it
                         if (mail not in email_in_file) and (names not in name_in_file):
                             # abesntEmails.append(mail) #append the mails which weren't found in an empty list
                             # abesntNames.append(names) #append the names which weren't found in an empty list
-                            Absent_Alert(mail,"COETA Attendance Alert", f"Your ward {names} was ABSENT at {curr_time} lecture")
-                            # print("ABSENT: ", mail)
-                            # print("ABSENT: ", names)
+                            # Absent_Alert(mail,"COETA Attendance Alert", f"Your ward {names} was ABSENT at {curr_time} lecture")
+                            print("ABSENT: ", mail)
+                            print("ABSENT: ", names)
                 break
     
     # webCam.release()
     cv2.destroyAllWindows()
 
-# def Select_Attendance_Folder():#To select attendance folder
-#     global default_attendance_folder, face_list, known_encodings_list #Made it global to modify
+def Select_Attendance_Folder():#To select attendance folder
+    global default_attendance_folder, face_list, known_encodings_list #Made it global to modify
 
-#     images_name.clear()#Clear previously stored names to avoid conflict
+    images_name.clear() #Clear previously stored names to avoid conflict
+    email_add.clear()
+    known_images.clear() #Clear previous encodings to avoid re-encoding of the same imgs
 
-#     file = filedialog.askdirectory()
-#     if file:
-#         messagebox.showwarning("Loading...",
-#         "Please wait till all the faces are loaded.\nThis depends on the number of faces you have in the selected directory\nPlease click OK to start")
+    file = filedialog.askdirectory()
+    if file:
+        messagebox.showwarning("Loading...",
+        "Please wait till all the faces are loaded.\nThis depends on the number of faces you have in the selected directory\nPlease click OK to start")
 
-#         default_attendance_folder = os.path.abspath(file)#Gives the selected dir as a str
-#         # print(defaultAttendanceFolder)
-#         face_list = os.listdir(default_attendance_folder)
-#         Loaded_Imgs(default_attendance_folder)
-#         known_encodings_list = Find_Encodings(known_images)
-#         known_images.clear() #Clear previous encodings to avoid re-encoding of the same imgs
-#         try:
-#             print(f'{len(known_encodings_list)} face encodings found')
-#             messagebox.showinfo("Faces found",
-#             f"Loading completed successfully\nFound {len(known_encodings_list)} faces in directory\n{default_attendance_folder}")
-#             print(images_name)
-#         #   print(filepath)
-#         except Exception as e:
-#             print(e)
-#             messagebox.showerror("No Face found", f"ERROR:{e}\nPlease select a folder with only visible Faces")
+        default_attendance_folder = os.path.abspath(file)#Gives the selected dir as a str
+        print(default_attendance_folder)
+        
+        face_list = os.listdir(default_attendance_folder)
+        Loaded_Imgs(default_attendance_folder)
+        known_encodings_list = Find_Encodings(known_images)
+        
+        # known_images.clear() #Clear previous encodings to avoid re-encoding of the same imgs
+        
+        try:
+            print(f'{len(known_encodings_list)} face encodings found')
+            messagebox.showinfo("Faces found",
+            f"Loading completed successfully\nFound {len(known_encodings_list)} faces in directory\n{default_attendance_folder}")
+            print(images_name)
+        #   print(filepath)
+        except Exception as e:
+            print(e)
+            messagebox.showerror("No Face found", f"ERROR:{e}\nPlease select a folder with only visible Faces")
 
 
     
