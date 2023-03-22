@@ -1,7 +1,7 @@
 #GUI designing starts
 
 from tkinter import *
-from final import *
+from code import *
 
 # def Select_Attendance_Folder():#To select attendance folder
 #     global default_attendance_folder, face_list, known_encodings_list #Made it global to modify
@@ -65,9 +65,9 @@ welcomeMsg = Label(root, text="Welcome to Students Face Attendance", bg="gray40"
                    fg="gray96", font="copperplate 25 bold", padx=10, pady=10).pack(
                    side=TOP, fill=X)
 
-# output = Text(root, height=15, background="black", fg="white",
-#                font=("copperplate 10 bold", 15), borderwidth=3, relief="solid", anchor="nw").pack(
-#                side=BOTTOM, fill=X)
+output = Text(root, height=15, background="black", fg="white",
+               font=("copperplate 10 bold", 15), borderwidth=3, relief="solid").pack(
+               side=BOTTOM, fill=X)
 
 takefaceButton = Button(root, text="Take Attendance", font="copperplate 10 bold", bg="gray40",
                         fg="gray80", padx=10, pady=10, command=lambda:Take_Face(email_add, images_name)).pack(
