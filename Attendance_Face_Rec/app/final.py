@@ -79,12 +79,10 @@ def Mark_Attendance(name, email):
 
             for line in attendance_file: #Read each stored line
                 entry = line.split(',') #Seperate them by "," to get the name and date values
-                names_in_attendanceFile.append(entry[0]) #Append name i.e, entry[0] to [] defined above
+                names_in_attendanceFile.append(entry[0]) #Append name i.e, entry[0] to list defined above
             
-            if name not in names_in_attendanceFile: #Check if name exists or not,if not then write name and date in the .csv
-                current_time = datetime.now()
-                dt_string = current_time.strftime('%I:%M:%S')
-                f.writelines(f'{name},{email},{dt_string}\n')
+            if name not in names_in_attendanceFile:#Check if name exists or not, if not then write name and date in the .csv
+                    f.writelines(f'{name},{email},{dt_string}, PRESENT\n')
 
 def Absent_Alert(to, subject, body):
     message = EmailMessage() 
@@ -207,30 +205,33 @@ def Take_Face(email_add, images_name):#Take the face from webcam and matching it
                 # known_images.clear()
                 print("Attendance closed successfully.")
                 messagebox.showinfo("Success", "Attendance closed successfully.\nPlease wait while we send emails to guardians of absent students.\nThis may take a while")
-                with open(filename, 'r') as f: # open the attendance file
-                    file_data = f.readlines()
+                with open(filename, 'a'):    
+                    with open(filename, 'r+') as f: # open the attendance file
+                        file_data = f.readlines()
 
-                    email_in_file = []
-                    name_in_file = []
-                    # abesntEmails = []
-                    # abesntNames = []
-                    
-                    for lines in file_data:
-                        add_entry = lines.split(',')
-                        email_in_file.append(add_entry[1]) #contains email
-                        name_in_file.append(add_entry[0]) #contains name
+                        email_in_file = []
+                        name_in_file = []
+                        # abesntEmails = []
+                        # abesntNames = []
+                        
+                        for lines in file_data:
+                            add_entry = lines.split(',')
+                            email_in_file.append(add_entry[1]) #contains email
+                            name_in_file.append(add_entry[0]) #contains name
 
-                    # print("PRESENT: ",ab_Email_InFile)
+                        # print("PRESENT: ",ab_Email_InFile)
 
-                    for mail, names in zip(email_add, images_name): 
-                    #checks for name and email in the list with previously loaded imgs
+                        for mail, names in zip(email_add, images_name): 
+                        #checks for name and email in the list with previously loaded imgs
 
-                        if (mail not in email_in_file) and (names not in name_in_file):
-                            # abesntEmails.append(mail) #append the mails which weren't found in an empty list
-                            # abesntNames.append(names) #append the names which weren't found in an empty list
-                            # Absent_Alert(mail,"COETA Attendance Alert", f"Your ward {names} was ABSENT at {curr_time} lecture")
-                            print("ABSENT: ", mail)
-                            print("ABSENT: ", names)
+                            if (mail not in email_in_file) and (names not in name_in_file):
+                                # abesntEmails.append(mail) #append the mails which weren't found in an empty list
+                                # abesntNames.append(names) #append the names which weren't found in an empty list
+                                Absent_Alert(mail,"COETA Attendance Alert", f"Your ward {names} was ABSENT at {time_for_attendanceSheet} lecture\nPLEASE DO NOT REPLY TO THIS EMAIL. IT'S AUTO-GENERATED")
+                                f.writelines(f'{names},{mail},{dt_string}, ABSENT\n')
+                                messagebox.showinfo("Success", "Emails send successfully")
+                                print("ABSENT: ", names)
+                                print("ABSENT: ", mail)
                 break
     
     # webCam.release()
@@ -281,9 +282,12 @@ images_name = []
 email_add = []
 face_list = os.listdir(default_attendance_folder) # Contains all the files in a directory
 
-curr_time = time.strftime("DATE=%d-%m-%Y TIME=%I %p")
+time_inside_attendanceSheet = datetime.now()
+dt_string = time_inside_attendanceSheet.strftime('%I:%M:%S')
+
 home = os.path.expanduser('~')
-filename = f"{home}\\Documents\\Attendance\\Attendance {curr_time}.csv"
+time_for_attendanceSheet = time.strftime("DATE=%d-%m-%Y TIME=%I %p")
+filename = f"{home}\\Documents\\Attendance\\Attendance {time_for_attendanceSheet}.csv"
 
 # print(Face_list)
 Loaded_Imgs(default_attendance_folder)
