@@ -1,64 +1,61 @@
-# Python program to open the
-# camera in Tkinter
-# Import the libraries,
-# tkinter, cv2, Image and ImageTk
-
-from tkinter import *
-import cv2
+import tkinter as tk
 from PIL import Image, ImageTk
+import cv2
 
-# Define a video capture object
-vid = cv2.VideoCapture(0)
+# Create the main window
+root = tk.Tk()
+root.title("Main Window")
 
-# Declare the width and height in variables
-width, height = 800, 600
+# Define a function to create a new window and display video from the webcam
+def show_webcam():
+    # Create a new Toplevel window
+    new_window = tk.Toplevel(root)
+    new_window.resizable(0, 0)
+    new_window.title("Webcam")
 
-# Set the width and height
-vid.set(cv2.CAP_PROP_FRAME_WIDTH, width)
-vid.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+    # Add grab_set to prevent the user from interacting with the main window
+    new_window.grab_set()
 
-# Create a GUI app
-app = Tk()
+    # Create a label for displaying the video stream
+    label = tk.Label(new_window)
+    label.pack()
 
-# Bind the app with Escape keyboard to
-# quit app whenever pressed
-app.bind('<Escape>', lambda e: app.quit())
+    # Create a button to stop the video stream
+    def stop_stream():
+        cap.release()
+        new_window.destroy()
 
-# Create a label and display it on app
-label_widget = Label(app)
-label_widget.pack()
+    # Add the "Stop Camera" button
+    stop_button = tk.Button(new_window, text="Stop Camera", command=stop_stream, bg="red")
+    stop_button.pack(side="bottom", pady=10)
 
-# Create a function to open camera and
-# display it in the label_widget on app
+    # Open the video stream from the default camera
+    cap = cv2.VideoCapture(0)
 
+    # Read frames from the video stream and display them in the Tkinter window
+    def update():
+        ret, frame = cap.read()
+        if ret:
+            # Convert the frame to RGB format
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-def open_camera():
+            # Convert the frame to a Tkinter-compatible image
+            image = Image.fromarray(frame)
+            photo = ImageTk.PhotoImage(image)
 
-	# Capture the video frame by frame
-	_, frame = vid.read()
+            # Update the label with the new image
+            label.configure(image=photo)
+            label.image = photo # Store the photo object as an attribute of the label widget
 
-	# Convert image from one color space to other
-	opencv_image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
+        # Schedule the next update
+        label.after(10, update)
 
-	# Capture the latest frame and transform to image
-	captured_image = Image.fromarray(opencv_image)
-
-	# Convert captured image to photoimage
-	photo_image = ImageTk.PhotoImage(image=captured_image)
-
-	# Displaying photoimage in the label
-	label_widget.photo_image = photo_image
-
-	# Configure image in the label
-	label_widget.configure(image=photo_image)
-
-	# Repeat the same process after every 10 seconds
-	label_widget.after(10, open_camera)
+    # Start the video stream update loop
+    update()
 
 
-# Create a button to open the camera in GUI app
-button1 = Button(app, text="Open Camera", command=open_camera)
-button1.pack()
+# Add a button to the main window that shows the webcam
+tk.Button(root, text="Show Webcam", command=show_webcam).pack()
 
-# Create an infinite loop for displaying app on screen
-app.mainloop()
+# Start the main event loop
+root.mainloop()

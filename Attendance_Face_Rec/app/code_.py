@@ -5,10 +5,8 @@ import cv2
 import os
 import numpy as np
 import random
-from posixpath import expanduser
 from datetime import datetime
 import time
-import subprocess
 from email.message import EmailMessage
 import smtplib
 
@@ -229,9 +227,10 @@ def Take_Face(email_add, images_name):#Take the face from webcam and matching it
                                 # abesntNames.append(names) #append the names which weren't found in an empty list
                                 # Absent_Alert(mail,"COETA Attendance Alert", f"Your ward {names} was ABSENT at {time_for_attendanceSheet} lecture\nPLEASE DO NOT REPLY TO THIS EMAIL. IT'S AUTO-GENERATED")
                                 f.writelines(f'{names},{mail},{dt_string}, ABSENT\n')
-                                messagebox.showinfo("Success", "Emails send successfully")
                                 print("ABSENT: ", names)
                                 print("ABSENT: ", mail)
+                                        
+                    messagebox.showinfo("Success", "Emails send successfully")
                 break
     
     # webCam.release()
@@ -269,6 +268,7 @@ def Select_Attendance_Folder():#To select attendance folder
             messagebox.showerror("No Face found", f"ERROR:{e}\nPlease select a folder with only visible Faces")
 
 
+web_cam = cv2.VideoCapture(0)# (0) represents default webcam
     
 create_default_attendance_folder = "C:\\Face Attendance for Students\\known"
 # createDefaultNewFaceFolder = "C:\\Face Attendance for Students\\New Saved Faces"
@@ -294,5 +294,3 @@ Loaded_Imgs(default_attendance_folder)
 known_encodings_list = Find_Encodings(known_images)
 print(f'{len(known_encodings_list)} face encodings found') 
 # messagebox.showinfo("Known Faces found", f"Found {len(known_encodingsList)} faces in directory\n{defaultAttendanceFolder}")
-
-web_cam = cv2.VideoCapture(0)# (0) represents default webcam

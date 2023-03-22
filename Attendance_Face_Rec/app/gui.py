@@ -1,7 +1,10 @@
 #GUI designing starts
 
-from tkinter import *
-from code_ import *
+import os
+import subprocess
+from tkinter import LEFT, TOP, Button, Label, Menu, Tk, messagebox
+from code_ import Save_Face, Select_Attendance_Folder, Take_Face
+from code_ import default_attendance_folder, known_encodings_list, email_add, images_name
 
 # def Select_Attendance_Folder():#To select attendance folder
 #     global default_attendance_folder, face_list, known_encodings_list #Made it global to modify
@@ -34,6 +37,7 @@ from code_ import *
 #             print(e)
 #             messagebox.showerror("No Face found", f"ERROR:{e}\nPlease select a folder with only visible Faces")
 
+
 def Open_Attendance_Sheet(): # Opens Attendance sheet directory
     home = os.path.expanduser('~')
     attendance_folder_path = f"{home}\\Documents\\Attendance"
@@ -47,7 +51,7 @@ def Open_New_Saved_Faces_Folder(): # Opens New Saved folder directory
 root = Tk()
 
 # To always open the window in the center of the screen
-root.geometry(f"{1000}x{700}+{(root.winfo_screenwidth()//2)-(1000//2)}+{(root.winfo_screenheight()//2)-(700//2)}")
+root.geometry(f"{700}x{500}+{(root.winfo_screenwidth()//2)-(700//2)}+{(root.winfo_screenheight()//2)-(500//2)}")
 root.resizable(0,0) # Not resizable
 root.title(f"Student Face Attendance: {default_attendance_folder}")
 root.wm_iconbitmap("Student.ico")
@@ -61,20 +65,16 @@ options.add_command(label="Open New Saved Faces folder", command=Open_New_Saved_
 menuBar.add_cascade(label="Options", menu=options)
 root.config(menu=menuBar)
 
-welcomeMsg = Label(root, text="Welcome to Students Face Attendance", bg="gray40",
+Label(root, text="Welcome to Students Face Attendance", bg="gray40",
                    fg="gray96", font="copperplate 25 bold", padx=10, pady=10).pack(
-                   side=TOP, fill=X)
+                   side=TOP, fill='x')
 
-output = Text(root, height=15, background="black", fg="white",
-               font=("copperplate 10 bold", 15), borderwidth=3, relief="solid").pack(
-               side=BOTTOM, fill=X)
-
-takefaceButton = Button(root, text="Take Attendance", font="copperplate 10 bold", bg="gray40",
+Button(root, text="Take Attendance", font="copperplate 10 bold", bg="gray40",
                         fg="gray80", padx=10, pady=10, command=lambda:Take_Face(email_add, images_name)).pack(
                         side=LEFT, anchor="nw", pady=50, padx=160)
                                     # Lambda to pass parameters for method
 
-savefaceButton = Button(root, text="Save Face", font="copperplate 10 bold", bg="gray40",
+Button(root, text="Save Face", font="copperplate 10 bold", bg="gray40",
                         fg="gray80", padx=10, pady=10, command=Save_Face).pack(
                         side=LEFT, anchor="nw", pady=50)
 
