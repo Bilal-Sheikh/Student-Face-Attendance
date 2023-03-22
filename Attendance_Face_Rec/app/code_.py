@@ -227,7 +227,7 @@ def Take_Face(email_add, images_name):#Take the face from webcam and matching it
                             if (mail not in email_in_file) and (names not in name_in_file):
                                 # abesntEmails.append(mail) #append the mails which weren't found in an empty list
                                 # abesntNames.append(names) #append the names which weren't found in an empty list
-                                Absent_Alert(mail,"COETA Attendance Alert", f"Your ward {names} was ABSENT at {time_for_attendanceSheet} lecture\nPLEASE DO NOT REPLY TO THIS EMAIL. IT'S AUTO-GENERATED")
+                                # Absent_Alert(mail,"COETA Attendance Alert", f"Your ward {names} was ABSENT at {time_for_attendanceSheet} lecture\nPLEASE DO NOT REPLY TO THIS EMAIL. IT'S AUTO-GENERATED")
                                 f.writelines(f'{names},{mail},{dt_string}, ABSENT\n')
                                 messagebox.showinfo("Success", "Emails send successfully")
                                 print("ABSENT: ", names)

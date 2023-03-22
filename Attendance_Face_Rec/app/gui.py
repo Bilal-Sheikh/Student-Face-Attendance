@@ -1,7 +1,7 @@
 #GUI designing starts
 
 from tkinter import *
-from code import *
+from code_ import *
 
 # def Select_Attendance_Folder():#To select attendance folder
 #     global default_attendance_folder, face_list, known_encodings_list #Made it global to modify
